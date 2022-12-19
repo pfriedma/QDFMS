@@ -17,6 +17,18 @@ defmodule Inventory.Category do
     end
   end
 
+  def update_category(id, name, icon) do
+    case get_category(id) do
+      {:error, _} -> {:error, :not_found}
+      %Category{} = category ->
+        Amnesia.transaction do
+          category
+          |> Map.update!(:name, &(&1 = name))
+          |> Map.update!(:image, &(&1 = icon))
+          |> Category.write()
+        end
+    end
+  end
 
   def get_category(id) do
     Amnesia.transaction do
@@ -32,6 +44,13 @@ defmodule Inventory.Category do
     Amnesia.transaction do
       Category.where(name == c_name)
       |> Amnesia.Selection.values()
+    end
+  end
+
+  def get_all_categories() do
+    Amnesia.transaction do
+      Category.stream()
+      |> Enum.to_list
     end
   end
 
