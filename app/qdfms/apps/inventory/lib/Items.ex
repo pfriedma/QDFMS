@@ -10,6 +10,17 @@ defmodule Inventory.Items do
   alias Database.Category
   alias Database.ItemCategory
 
+  defprotocol Comparable do
+    def compare(a, b)
+  end
+
+  defimpl Comparable,
+    for: [Integer, Float] do
+    def compare(a, b) when a < b, do: :lt
+    def compare(a, b) when a == b, do: :eq
+    def compare(a, b) when a > b, do: :gt
+  end
+
   def create_item(container, upc, name, description, mfr_exp_date, date_added, weight, photo) do
     item = Amnesia.transaction do
       date_added = if is_nil(date_added), do: Date.utc_today, else: date_added
@@ -39,6 +50,15 @@ defmodule Inventory.Items do
     end
   end
 
+  def filter_items_by_category_weight(category, weight, container, comp) do
+    #do the comparison in grams
+    target_weight = ExUc.from(ExUc.convert(weight, :grams)).value
+    find_items_by_category(category)
+      |> Enum.filter(fn %Database.Item{} = x -> x.container_id == container end)
+      |> Enum.filter(fn %Database.Item{} = x -> Inventory.Items.Comparable.compare(ExUc.from(ExUc.convert(x.weight, :grams)).value, target_weight) == comp end)
+  end
+
+
   def get_item(id) do
     Amnesia.transaction do
       Item.read(id)
@@ -66,7 +86,7 @@ defmodule Inventory.Items do
   def find_exp_items(container) do
     Amnesia.transaction do
       Item.stream
-      |> Enum.filter(fn %Database.Item{} = x -> x.container_id == container)
+      |> Enum.filter(fn %Database.Item{} = x -> x.container_id == container end)
       |> Enum.filter(fn %Database.Item{} = x -> Date.compare(x.mfr_exp_date, Date.utc_today) == :lt end)
     end
   end
@@ -83,7 +103,7 @@ defmodule Inventory.Items do
     Amnesia.transaction do
       target_date = Date.add(Date.utc_today, -1* days)
       Item.stream
-      |> Enum.filter(fn %Database.Item{} = x -> x.container_id == container)
+      |> Enum.filter(fn %Database.Item{} = x -> x.container_id == container end)
       |> Enum.filter(fn %Database.Item{} = x -> Date.compare(x.date_added, target_date) == :lt end)
     end
   end
@@ -108,6 +128,18 @@ defmodule Inventory.Items do
     end
     sync_categories_history(item)
     cat
+  end
+
+  def update(%Item{} = item) do
+    Amnesia.transaction do
+      Item.read(item.id)
+      |> Map.update!(:name, &(&1 = item.name))
+      |> Map.update!(:description, &(&1 = item.description))
+      |> Map.update!(:photo, &(&1 = item.photo))
+      |> Map.update!(:mfr_exp_date, &(&1 = item.mfr_exp_date))
+      |> Map.update!(:date_added, &(&1 = item.date_added))
+      |> Item.write()
+    end
   end
 
   def sync_categories_history(id) do
@@ -155,5 +187,7 @@ defmodule Inventory.Items do
       end
     )
   end
+
+
 
 end

@@ -1,6 +1,5 @@
 defmodule QdfmsWeb.LiveItems do
   use QdfmsWeb, :live_view
-
   @topic "whats_inside:lobby"
 
   @impl true
@@ -20,19 +19,38 @@ defmodule QdfmsWeb.LiveItems do
     ~L"""
     <ul class="todo-list">
     <%= for item <- @items do %>
+    <% weight = %ExUc.Value{} = item.weight %>
     <li data-id={item.id} class={completed?(item)}>
       <div class="view">
         <label><%= item.name %></label>
         <p> Categories </p>
-        <p> <% cats = Inventory.Items.get_categories(item.id) %>
-            <%= for cat <- cats do %>
-                <p><%=cat.name %></p>
-                <%= if !is_nil(cat.image) do %>
-                <p><img src="<%= "data:image/svg;base64," <> Base.encode64(cat.image) %>"/></p>
-                <% end %>
-            <% end %>
+        <% cats = Inventory.Items.get_categories(item.id) %>
+          <%= for cat <- cats do %>
+              <div class="categories" style="float:left">
+              <%= if !is_nil(cat.image) do %>
+              <img src="<%= "data:image/svg+xml;base64," <> Base.encode64(cat.image) %>", height='60', width='60'/><br/>
+              <% end %>
+              <%=cat.name %>
+              </div>
+          <% end %>
         </p>
-        <p><%= inspect(item) %></p>
+        <div class="item_desc", style="clear:both">
+          <div class="metadata", style="float:left">
+            <h3>Weight: <%= ExUc.as_string(weight) %><h3>
+            <h3>Added: <%= item.date_added %> </h3>
+            <h3>Expires: <%= item.mfr_exp_date %></h3>
+            <h4>UPC: <%= item.upc %> </h4>
+          </div>
+          <div class="item_image", style="float:right">
+            <% if !is_nil(item.photo) do %>
+             <img src="<%= "data:image/png;base64," <> Base.encode64(item.photo) %>" height='100',width='100' />
+            <% end %>
+          </div>
+          <div class = "item_desc", style="clear:both">
+            <h3>Description</h3>
+            <%= item.description %>
+          </div>
+        </div>
       </div>
     </li>
     <% end %>
