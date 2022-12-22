@@ -58,8 +58,16 @@ defmodule Inventory.Items do
 
   def find_exp_items() do
     Amnesia.transaction do
-      Item.where(mfr_exp_date > Date.utc_today)
-      |> Amnesia.Selection.values()
+      Item.stream
+      |> Enum.filter(fn %Database.Item{} = x -> Date.compare(x.mfr_exp_date, Date.utc_today) == :lt end)
+    end
+  end
+
+  def find_exp_items(container) do
+    Amnesia.transaction do
+      Item.stream
+      |> Enum.filter(fn %Database.Item{} = x -> x.container_id == container)
+      |> Enum.filter(fn %Database.Item{} = x -> Date.compare(x.mfr_exp_date, Date.utc_today) == :lt end)
     end
   end
 
@@ -67,6 +75,15 @@ defmodule Inventory.Items do
     Amnesia.transaction do
       target_date = Date.add(Date.utc_today, -1* days)
       Item.stream
+      |> Enum.filter(fn %Database.Item{} = x -> Date.compare(x.date_added, target_date) == :lt end)
+    end
+  end
+
+  def find_items_older_than(days, container) do
+    Amnesia.transaction do
+      target_date = Date.add(Date.utc_today, -1* days)
+      Item.stream
+      |> Enum.filter(fn %Database.Item{} = x -> x.container_id == container)
       |> Enum.filter(fn %Database.Item{} = x -> Date.compare(x.date_added, target_date) == :lt end)
     end
   end
