@@ -54,6 +54,5 @@ defmodule QdfmsWeb.UserSocket do
   #     Elixir.QdfmsWeb.Endpoint.broadcast("user_socket:#{user.id}", "disconnect", %{})
   #
   # Returning `nil` makes this socket anonymous.
-  @impl true
-  def id(_socket), do: nil
+
 end

@@ -17,34 +17,45 @@ defmodule QdfmsWeb.LiveItems do
   @impl true
   def render(assigns) do
     ~L"""
-    <ul class="todo-list">
+    <style>
+    .item-list {list-style-type: none;}
+    .list {border: 1px solid black; padding: 1em;}
+    .categories {float: left; font-weight:bold; padding:1em;}
+    .view label   {font-size: x-large; float:left;}
+    .metadata h3 {font-size:medium;}
+    .metadata {clear:both;}
+    .item_desc {clear:both;}
+    .cat_container {clear:both;}
+    .expired {color: red; font-weight: bold;}
+    </style>
+    <ul class="item-list">
     <%= for item <- @items do %>
     <% weight = %ExUc.Value{} = item.weight %>
-    <li data-id={item.id} class={completed?(item)}>
+    <li data-id={item.id} class="list">
       <div class="view">
         <label><%= item.name %></label>
-        <p> Categories </p>
+        <div class="item_image", style="float:right; width:100">
+        <%= if !is_nil(item.photo) do %>
+         <img src="<%= "data:image/png;base64," <> item.photo %>" height='100',width='100' />
+        <% end %>
+      </div>
+        <div class="cat_container">
         <% cats = Inventory.Items.get_categories(item.id) %>
           <%= for cat <- cats do %>
-              <div class="categories" style="float:left">
+              <div class="categories">
               <%= if !is_nil(cat.image) do %>
-              <img src="<%= "data:image/svg+xml;base64," <> Base.encode64(cat.image) %>", height='60', width='60'/><br/>
+              <img src="<%= "data:image/svg+xml;base64," <> cat.image %>", height='60', width='60'/><br/>
               <% end %>
               <%=cat.name %>
               </div>
           <% end %>
+        </div>
         </p>
-        <div class="item_desc", style="clear:both">
-          <div class="metadata", style="float:left">
+        <div class="item_desc">
+          <div class="metadata">
             <h3>Weight: <%= ExUc.as_string(weight) %><h3>
             <h3>Added: <%= item.date_added %> </h3>
-            <h3>Expires: <%= item.mfr_exp_date %></h3>
-            <h4>UPC: <%= item.upc %> </h4>
-          </div>
-          <div class="item_image", style="float:right">
-            <% if !is_nil(item.photo) do %>
-             <img src="<%= "data:image/png;base64," <> Base.encode64(item.photo) %>" height='100',width='100' />
-            <% end %>
+            <h3 <%= if Date.compare(item.mfr_exp_date, Date.utc_today) == :lt do "class=expired" end %> >Expires: <%= item.mfr_exp_date %></h3>
           </div>
           <div class = "item_desc", style="clear:both">
             <h3>Description</h3>
@@ -52,6 +63,7 @@ defmodule QdfmsWeb.LiveItems do
           </div>
         </div>
       </div>
+      <p>UPC: <%= item.upc %> </p>
     </li>
     <% end %>
     </ul>

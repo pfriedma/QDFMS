@@ -17,7 +17,7 @@ defmodule QdfmsWeb.Router do
   scope "/", QdfmsWeb do
     pipe_through :browser
 
-    live "/", HomeLive, :index
+    live "/", HomeLive
     live "/items", LiveItems
   end
 

@@ -1,8 +1,6 @@
-// NOTE: The contents of this file will only be executed if
-// you uncomment its entry in "assets/js/app.js".
 
 // Bring in Phoenix channels client library:
-import {Socket} from "phoenix"
+//import {Socket} from "phoenix"
 
 // And connect to the path in "lib/qdfms_web/endpoint.ex". We pass the
 // token for authentication. Read below how it should be used.
@@ -60,5 +58,26 @@ import {Socket} from "phoenix"
 //channel.join()
   //.receive("ok", resp => { console.log("Joined successfully", resp) })
   //.receive("error", resp => { console.log("Unable to join", resp) })
+
+//export default socket
+
+
+//let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
+//let socket = new Socket("/socket", Socket, {params: {_csrf_token: csrfToken}})
+
+
+// connect if there are any LiveViews on the page
+//socket.connect()
+
+//let channel = socket.channel("whats_inside:lobby", {})
+//channel.join()
+//  .receive("ok", resp => { console.log("Joined successfully", resp) })
+//  .receive("error", resp => { console.log("Unable to join", resp) })
+
+// expose liveSocket on window for web console debug logs and latency simulation:
+// >> liveSocket.enableDebug()
+// >> liveSocket.enableLatencySim(1000)  // enabled for duration of browser session
+// >> liveSocket.disableLatencySim()
+//window.liveSocket = socket
 
 //export default socket
