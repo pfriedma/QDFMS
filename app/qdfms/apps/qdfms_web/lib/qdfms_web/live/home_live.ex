@@ -108,7 +108,7 @@ defmodule QdfmsWeb.HomeLive do
     {:noreply, socket}
   end
 
-
+  @impl true
   def render(assigns) do
     ~L"""
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript">
@@ -206,14 +206,12 @@ defmodule QdfmsWeb.HomeLive do
     let html5QrcodeScanner = new Html5QrcodeScanner(
         "reader",
         {
-            fps: 10,
+            fps: 5,
             // Important notice: this is experimental feature, use it at your
             // own risk. See documentation in
             // mebjas@/html5-qrcode/src/experimental-features.ts
-            experimentalFeatures: {
-                useBarCodeDetectorIfSupported: true
-            },
             rememberLastUsedCamera: true,
+            qrbox: 250,
             showTorchButtonIfSupported: true
         });
   window.scanner = html5QrcodeScanner;

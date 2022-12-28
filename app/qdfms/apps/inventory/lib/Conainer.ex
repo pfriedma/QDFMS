@@ -15,6 +15,12 @@ defmodule Inventory.Container do
     end
   end
 
+  def get_all_containers() do
+    Amnesia.transaction do
+      Container.stream()
+      |> Enum.to_list
+    end
+  end
 
   def get_container(id) do
     Amnesia.transaction do

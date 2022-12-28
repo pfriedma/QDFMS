@@ -12,7 +12,7 @@ import Config
 config :mnesia, dir: to_charlist("/mnt/c/Users/pfrie/OneDrive/Documents/Projects/QDFMS/app/qdfms/apps/inventory/Mnesia.nonode@nohost")
 
 config :qdfms_web,
-  :generators,  context_app: :qdfms
+  :generators,  context_app: false
 
 # Configures the endpoint
 config :qdfms_web, QdfmsWeb.Endpoint,

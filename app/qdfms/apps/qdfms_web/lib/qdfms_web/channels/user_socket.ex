@@ -18,6 +18,7 @@ defmodule QdfmsWeb.UserSocket do
             transport_pid: nil
 
   channel "lv:*", Phoenix.LiveView.Channel
+  channel "lvu:*", Phoenix.LiveView.UploadChannel
 
   channel "whats_inside:*", QdfmsWeb.WhatsInsideChannel
 

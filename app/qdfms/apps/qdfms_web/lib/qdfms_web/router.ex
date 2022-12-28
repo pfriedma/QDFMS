@@ -19,6 +19,9 @@ defmodule QdfmsWeb.Router do
 
     live "/", HomeLive
     live "/items", LiveItems
+    live "/items/:conatiner", LiveItems
+    live "/admin", AdminLive
+    live "/test", CategoryLive
   end
 
   # Other scopes may use custom stacks.
