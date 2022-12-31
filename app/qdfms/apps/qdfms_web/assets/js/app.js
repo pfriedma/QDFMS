@@ -5,7 +5,7 @@ import "../css/app.css"
 // If you want to use Phoenix channels, run `mix help phx.gen.channel`
 // to get started and then uncomment the line below.
 import "./user_socket.js"
-
+//import "../vendor/html5-qrcode.min.js"
 // You can include dependencies in two ways.
 //
 // The simplest option is to put them in assets/vendor and
@@ -25,6 +25,8 @@ import "phoenix_html"
 import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import topbar from "../vendor/topbar"
+//import Html5QrcodeScanner from "../vendor/html5-qrcode.min"
+
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveSocket("/live", Socket, {params: {_csrf_token: csrfToken}})
@@ -45,15 +47,15 @@ liveSocket.connect()
 liveSocket.enableDebug()
 
 
-let channel = liveSocket.channel(`whats_inside:${csrfToken}`,{})
-channel.join()
-  .receive("ok", resp => { console.log("Joined successfully", resp) })
-  .receive("error", resp => { console.log("Unable to join", resp) })
+//let channel = liveSocket.channel(`whats_inside:${csrfToken}`,{})
+//channel.join()
+//  .receive("ok", resp => { console.log("Joined successfully", resp) })
+//  .receive("error", resp => { console.log("Unable to join", resp) })
 
 // expose liveSocket on window for web console debug logs and latency simulation:
 // >> liveSocket.enableDebug()
 // >> liveSocket.enableLatencySim(1000)  // enabled for duration of browser session
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket
-window.channel = channel
+//window.channel = channel
 export default liveSocket

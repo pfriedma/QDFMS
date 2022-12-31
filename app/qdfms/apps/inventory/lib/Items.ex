@@ -43,6 +43,7 @@ defmodule Inventory.Items do
       |> case do
         {:error, _ } -> {:error, :item_not_found}
         %Item{} = item ->
+          update_categories_item(item.id, [])
           item |> Item.delete()
           Inventory.HistoricalItems.decrement_count(item)
           item
@@ -88,6 +89,14 @@ defmodule Inventory.Items do
       Item.stream
       |> Enum.filter(fn %Database.Item{} = x -> x.container_id == container end)
       |> Enum.filter(fn %Database.Item{} = x -> Date.compare(x.mfr_exp_date, Date.utc_today) == :lt end)
+    end
+  end
+
+  def find_exp_items(container,date) do
+    Amnesia.transaction do
+      Item.stream
+      |> Enum.filter(fn %Database.Item{} = x -> x.container_id == container end)
+      |> Enum.filter(fn %Database.Item{} = x -> Date.compare(x.mfr_exp_date, date) == :lt end)
     end
   end
 
@@ -177,6 +186,20 @@ defmodule Inventory.Items do
       ItemCategory.where(item_id == item)
       |> Amnesia.Selection.values()
     end
+  end
+
+  def get_categories_ids(item) do
+    get_categories_raw(item)
+    |> Enum.map(&(&1.category_id))
+  end
+
+  def update_categories_item(item, new_cats) do
+    #Items in the list
+    orig_cats = get_categories_ids(item)
+    cats_to_add = Enum.concat(orig_cats, new_cats)|>Enum.uniq|>Enum.reject(&(Enum.member?(orig_cats,&1)))
+    cats_to_remove = Enum.concat(orig_cats, new_cats)|>Enum.uniq|>Enum.reject(&(Enum.member?(new_cats,&1)))
+    for cat <- cats_to_remove, do: remove_category_item(item, cat)
+    for cat <- cats_to_add, do: add_category_item(item,cat)
   end
 
   def get_categories(item) do

@@ -1,11 +1,13 @@
 defmodule ItemComponentFormLive do
   use QdfmsWeb, :live_component
+  alias Phoenix.LiveView.JS
 
 
   def handle_event("validate", _data, socket) do
     {:noreply, socket}
 
   end
+
 
   def handle_event("save_item", %{"item" => item_data} = _data, socket) do
     today = Date.utc_today()
@@ -17,37 +19,83 @@ defmodule ItemComponentFormLive do
         {:ok, Base.encode64(File.read!(path))}
       end)
       encoded_file_data = List.first(file_data)
-#def create_item(container, upc, name, description, mfr_exp_date, date_added, weight, photo)
       if item_data["id"] == "new" do
         IO.puts("creating a new one...")
-        do_assign_categories(item_data["categories_checkbox_group"])
-        #Inventory.Item.create_item(container)
-        #send(self(), {:updated_items})
-        socket = socket
-        |> put_flash(:info, "Device added!")
-        {:noreply, socket}
+        upc = if item_data["upc"] != nil && String.length(item_data["upc"]) > 0, do: item_data["upc"], else: nil
+        item = %Database.Item{
+          upc: upc,
+          name: item_data["name"],
+          description: item_data["description"],
+          mfr_exp_date: Date.from_iso8601!(item_data["exp_date"]),
+          date_added: Date.utc_today(),
+          weight: ExUc.from(item_data["weight_value"] <> "" <> item_data["units"]),
+          container_id: String.to_integer(item_data["container"]),
+          photo: encoded_file_data
+        }
+        case Inventory.Items.create_item(item) do
+          {:error, _ } ->
+              socket = socket
+              |> put_flash(:info, "error")
+              {:noreply, socket}
+          %Database.Item{} = item ->
+            do_assign_categories(item, item_data["categories_checkbox_group"])
+            send(self(), {:event, %{update_items: item.id}})
+            socket = socket
+            {:noreply, socket}
+        end
+        #do_assign_categories(item.id item_data["categories_checkbox_group"])
       else
         encoded_file_data = if is_nil(encoded_file_data) && item_data["clear_img"] == "false" do
           #need to get the image data as to not replace it
           get_image_from_db(
-            Inventory.Item.get_item(
+            Inventory.Items.get_item(
               String.to_integer(item_data["id"])
               )
             )
+        else
+          encoded_file_data
         end
-
+        item = %Database.Item{
+          upc: item_data["upc"],
+          id: String.to_integer(item_data["id"]),
+          name: item_data["name"],
+          description: item_data["description"],
+          mfr_exp_date: Date.from_iso8601!(item_data["exp_date"]),
+          date_added: Inventory.Items.get_item(String.to_integer(item_data["id"])).date_added,
+          weight: ExUc.from(item_data["weight_value"] <> "" <> item_data["units"]),
+          container_id: String.to_integer(item_data["container"]),
+          photo: encoded_file_data
+        }
+        case Inventory.Items.update(item) do
+          {:error, _ } ->
+              socket = socket
+              |> put_flash(:info, "error")
+              {:noreply, socket}
+          %Database.Item{} = item ->
+            do_assign_categories(item, item_data["categories_checkbox_group"])
+            send(self(), {:event, %{update_items: item.id}})
+            socket = socket
+            {:noreply, socket}
+        end
+          {:noreply, socket}
       end
+  end
 
-    IO.puts(Kernel.inspect(item_data))
-    {:noreply, socket}
+  def update(assigns, socket) do
+    {:ok, assign(socket, assigns)}
   end
 
   defp get_image_from_db(%Database.Item{} = item) do
-    item.image
+    item.photo
   end
 
-  defp do_assign_categories(cat_list) do
-
+  defp do_assign_categories(item, cat_list) do
+      cat_list = if is_nil(cat_list) || Enum.count(cat_list) == 0 do
+        []
+      else
+        Enum.map(cat_list, fn x -> String.to_integer(x) end)
+      end
+      Inventory.Items.update_categories_item(item.id, cat_list)
   end
 
 
@@ -57,7 +105,7 @@ defmodule ItemComponentFormLive do
     <div class="item_form">
 
     <%= f = form_for :item, "#",  phx_submit: "save_item", phx_change: "validate", phx_target: @myself %>
-      <%= cats = if @id != "new", do: Enum.map(Inventory.Items.get_categories_raw(String.to_integer(@id)), fn %Database.ItemCategory{} = x -> x.category_id end), else: []%>
+      <% cats = if @id != "new", do: Enum.map(Inventory.Items.get_categories_raw(String.to_integer(@id)), fn %Database.ItemCategory{} = x -> x.category_id end), else: [@item_categories]%>
       <%= hidden_input f, :id, value: @id %>
       <%= hidden_input f, :container, value: @container%>
         <%= label f, :name %>
@@ -97,6 +145,7 @@ defmodule ItemComponentFormLive do
         <%= checkbox f, :clear_img %>
       <% end %>
       <div style="clear:both"></div>
+
 
     <%= submit "Save" %>
     </div>

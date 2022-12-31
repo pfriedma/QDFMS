@@ -155,8 +155,6 @@ defmodule QdfmsWeb.AdminLive do
             <%= render_device_screen(assigns) %>
           <% end %>
       </div>
-            <%= Kernel.inspect(@state) %>
-            <%= Kernel.inspect(@inf_data) %>
 
     </div>
     """

@@ -10,14 +10,15 @@ defmodule QdfmsWeb.LiveItems do
     socket
     |> assign(items: Inventory.Items.get_items_in_container(String.to_integer(container_id)))
     |> assign(container: container_id)
-    |> allow_upload(:image, accept: ~w(.jpg .jpeg .png .gif), auto_upload: false)
+    |> assign(selected_cats: [])
+    |> allow_upload(:image, accept: ~w(.png ), auto_upload: false)
     } # add items to assigns
   end
   def mount(_params , _session, socket) do
     {:ok,
     socket
     |> assign(items: [])
-    |> allow_upload(:image, accept: ~w(.jpg .jpeg .png .gif), auto_upload: false)
+    |> allow_upload(:image, accept: ~w(.png), auto_upload: false)
     } # add items to assigns
   end
 
@@ -25,6 +26,10 @@ defmodule QdfmsWeb.LiveItems do
   @impl true
   def handle_info(%{event: "update", payload: %{items: items}}, socket) do
     {:noreply, assign(socket, items: items)}
+  end
+
+  def handle_info(%{event: "update_categories", payload: %{selected_cats: selected_cats_list}}, socket) do
+    {:noreply, assign(socket, selected_cats: selected_cats_list)}
   end
 
   def handle_params(%{"container" => container}, _, socket) do
@@ -53,6 +58,9 @@ defmodule QdfmsWeb.LiveItems do
     .cat_container {clear:both;}
     .expired {color: red; font-weight: bold;}
     </style>
+
+    <.live_component module={LiveSearchComponent} id="search_comp" items={@items} selected_cats={@selected_cats} categories={Inventory.Category.get_all_categories()} container={@container} />
+
     <ul class="item-list">
 
     <button phx-click={JS.show(to: "#new_item_form", transition: "fade-in")}>Create New</button>
