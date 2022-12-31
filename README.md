@@ -1,14 +1,18 @@
 # QDFMS
 The Quick and Dirty Freezer Management System 
 
+QDFMS manages items in containers. Items can have categories. Item history is tracked so if you scan something it's seen before, you'll get the data. It also tracks how often an item has been added/removed over a barcode's lifetime, but this trending data isn't exposed in the app UI yet (but you can query Inventory.HistoricalItems in e.g iex) 
+
 This code is pre-pre-pre-alpha, and most certainly contains many bugs. It is not yet packagable as an application but that's up next :P 
+This was a fun project to learn about Phoenix Live View, but also because we got sick of not being able to easily recall what's in our chest freezer in the basement. 
+The goal was to create an app that would have minimal non-BEAM dependencies.
+Eventually, I'll clean it up so you can build a BEAM file that just runs the thing, but now it only works running via mix.
+
 
 It is an ELixir Umbrella app containing
 * Inventory: A Mnesia-backed inventory manager application that supports basic operations on Items, Containers, etc
 * Qdfms_web: A web interface for Inventory 
 
-The goal was to create an app that would have minimal non-BEAM dependencies.
-Eventually, I'll clean it up so you can build a BEAM file that just runs the thing, but now it only works running via mix.
 
 To use: 
 You'll need to configure SSL in app config: 
