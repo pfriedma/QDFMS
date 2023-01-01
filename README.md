@@ -5,25 +5,39 @@ The Quick and Dirty Freezer Management System
 QDFMS manages items in containers. Items can have categories. Item history is tracked so if you scan something it's seen before, you'll get the data. It also tracks how often an item has been added/removed over a barcode's lifetime, but this trending data isn't exposed in the app UI yet (but you can query Inventory.HistoricalItems in e.g iex) 
 
 This code is pre-pre-pre-alpha, and most certainly contains many bugs. It is not yet packagable as an application but that's up next :P 
-This was a fun project to learn about Phoenix Live View, but also because we got sick of not being able to easily recall what's in our chest freezer in the basement. 
-The goal was to create an app that would have minimal non-BEAM dependencies.
-Eventually, I'll clean it up so you can build a BEAM file that just runs the thing, but now it only works running via mix.
+This was a fun project to learn about Phoenix Live View, but also because we got sick of not being able to easily recall what's in our chest freezer in the basement. See the Known Issues section.
 
+The goal was to create an app that would have minimal non-BEAM dependencies, which is why mnesia was chosen for persistance - it's part of the Erlang/OTP release. 
+
+Eventually, I'll clean it up so you can build a BEAM file that just runs the thing, but now it only works running via mix.
 
 It is an ELixir Umbrella app containing
 * Inventory: A Mnesia-backed inventory manager application that supports basic operations on Items, Containers, etc
 * Qdfms_web: A web interface for Inventory 
 
-## Use
-To use: 
-You'll need to configure SSL in app config: 
-e.g. run mix phx.gen.cert and update the config in def/config.exs
-or update config/config.exs 
-Camera access is only allowed via localhost and HTTPS so yeah, you'll need this for barcode to work
+## Use and Setup
 
+### Config
+#### SSL 
+You'll need to configure SSL in app config: 
+e.g. run `mix phx.gen.cert` and update the config in def/config.exs or update config/config.exs (see phoenix SSL docs)
+
+Camera access is only allowed via localhost and HTTPS so yeah, you'll need this for barcode scanning to work. (you could also throw it behind a proxy... but that would add an external component) 
+
+#### Database
+QDFMS uses mnesia, which is part of the Erlang/OTP distribution. Before running you'll need to tell the app where to find/create the database disk files. This is the first config option in  /app/qdfms/config/config.esx
+```
+config :mnesia, dir: to_charlist("/var/qdfms/db/Mnesia.nonode@nohost")
+```
+
+Then cd to /app/qdfms/apps/inventory and run 
+`mix amnesia.create -d Database --disk` 
+This will create the disk-backed tables for the app 
+
+### Running
 To run the webapp:
 cd to apps/qdfms_web
-run iex -S mix phx.server
+`run iex -S mix phx.server`
 
 go to https://hostname:port/admin to configure:
 * Containers - these are the basic categorizations of Items. Items live in a container. A container can be named anything (e.g. "Basement Shelf" or "Box #214") 
