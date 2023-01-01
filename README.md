@@ -90,5 +90,5 @@ Add Item Screen:
 * Can save multiple copies of an item by just continuing to click the save button, this should be an explicit "Create N copies" operation, not a non-validated submit operation. 
 * Wight can only be entered in whole numbers 
 * Expiry date is required but not validated to exist on the form
-* No way to generate QR codes for printing for generated (manually entered) items. This is a TODO so you can print codes for things and manage them easier. Workaround is to generate codes for the item using another tool FIRST then scan them in. 
+* No way to generate QR codes for printing for generated (manually entered) items. This is a TODO so you can print codes for things and manage them easier. Workaround is to generate codes for the item using another tool FIRST then scan them in. You can also view an item to get it's "UPC" (generic field name for any scanned barcode, even if it's not actually a UPC) and use whatever tool you want to generate a barcode you like (and is [supported](https://github.com/mebjas/html5-qrcode#supported-code-formats) by the scanning library) 
 * Previously entered items don't sync their categories correctly in UI.
