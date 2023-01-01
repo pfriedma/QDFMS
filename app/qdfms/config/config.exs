@@ -9,7 +9,7 @@
 # move said applications out of the umbrella.
 import Config
 
-config :mnesia, dir: to_charlist("/mnt/c/Users/pfrie/OneDrive/Documents/Projects/QDFMS/app/qdfms/apps/inventory/Mnesia.nonode@nohost")
+config :mnesia, dir: to_charlist("/var/qdfms/db/Mnesia.nonode@nohost")
 
 config :qdfms_web,
   :generators,  context_app: false
