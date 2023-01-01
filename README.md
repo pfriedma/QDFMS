@@ -37,13 +37,13 @@ NOTE: Icons aren't included, but I used the [Lexicon Food Icons pack](https://ww
 Category icons are configured at /admin
 
 Admin Category Screen: 
-![Category management screen](/blob/master/doc_images/adminCats.png?raw=true "Category Management")
+![Category management screen](/doc_images/adminCats.png?raw=true "Category Management")
 
 Search Screen: 
-![Item search screen](/blob/master/doc_images/Search.png?raw=true "Search Items")
+![Item search screen](/doc_images/Search.png?raw=true "Search Items")
 
 Add Item Screen: 
-![Item add screen](/blob/master/doc_images/AddNew.png?raw=true "Add Item")
+![Item add screen](/doc_images/AddNew.png?raw=true "Add Item")
 
 
 ## Known issues
