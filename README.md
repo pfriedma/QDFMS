@@ -138,8 +138,11 @@ This example takes all items from container 3, with an ID > 14 and changes their
 items_mod = Inventory.Items.get_items_in_container(3) |> Enum.filter(&(&1.id > 14)) |> Enum.map(fn x -> %{x | container_id: 2} end)
 for item <- items_mod, do: item |> Database.Item.write!()
 ```
+#### Other data operations
 The data is all maps, basically, so you can do some pretty powerful manipulation of the data if you want. 
+
 If you have a list of items that you want to change the categories of, `update_categories_items(item, list_of_category_ids)` let's you do that.  
+
 To get category names and IDs, use `Inventory.Category.get_all_categories |> Enum.map(&({&1.id, &1.name}))` and pick the IDs to populate a list of category_ids you want to assign, then: 
 ```
 category_ids = [1,2,3]
