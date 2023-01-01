@@ -133,7 +133,7 @@ Updating the categories /should/ happen automatically, but you can call `Invento
 
 #### Moving items between containers
 This is ugly and should be part of the webapp, but it's not yet. 
-This example takes all items with an ID > 14 and changes their container_id to 2
+This example takes all items from container 3, with an ID > 14 and changes their container_id to 2
 ```
 items_mod = Inventory.Items.get_items_in_container(3) |> Enum.filter(&(&1.id > 14)) |> Enum.map(fn x -> %{x | container_id: 2} end)
 for item <- items_mod, do: item |> Database.Item.write!()
