@@ -2,7 +2,7 @@
 The Quick and Dirty Freezer Management System 
 
 ## Intro 
-QDFMS manages items in containers. Items can have categories. Item history is tracked so if you scan something it's seen before, you'll get the data. It also tracks how often an item has been added/removed over a barcode's lifetime, but this trending data isn't exposed in the app UI yet (but you can query Inventory.HistoricalItems in e.g iex) 
+QDFMS manages items in containers. Items can have categories. Item history is tracked so if you scan something it's seen before, you'll get the data. It also tracks how often an item has been added/removed over a barcode's lifetime, but this trending data isn't exposed in the app UI yet (but you can query Inventory.HistoricalItems in e.g iex - see [Other Data Operatoins](#other-data-operations)
 
 This code is pre-pre-pre-alpha, and most certainly contains many bugs. It is not yet packagable as an application but that's up next :P 
 This was a fun project to learn about Phoenix Live View, but also because we got sick of not being able to easily recall what's in our chest freezer in the basement. See the [Known Issues](#known-issues) section.
@@ -148,3 +148,9 @@ To get category names and IDs, use `Inventory.Category.get_all_categories |> Enu
 category_ids = [1,2,3]
 for item <- items, do: Inventory.Items.update_categories_items(item, list_of_category_ids)
 ```
+or, perhaps you want to change anything in container 3 with the name containing "frozen ground beef" to have a UPC of "DEAD00BEEF":
+```
+items_mod = Inventory.Items.get_items_in_container(3) |> Enum.filter(&(String.contains?(&1.name, "frozen ground beef")) |> Enum.map(fn x -> %{x | upc: "DEAD00BEEF"} end)
+for item <- items_mod, do: item |> Database.Item.write!()
+```
+etc. 
