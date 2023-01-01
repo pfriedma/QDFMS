@@ -103,7 +103,7 @@ defmodule LiveSearchComponent do
 
   defp filter_items_text(items, text_string) do
     items
-    |> Enum.filter(fn x -> String.contains?(x.name, text_string) || String.contains?(x.description, text_string) end)
+    |> Enum.filter(fn x -> String.contains?(String.downcase(x.name), String.downcase(text_string)) || String.contains?(String.downcase(x.description), String.downcase(text_string)) end)
   end
 
   defp get_for_cont(str_id) do
