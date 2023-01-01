@@ -5,7 +5,7 @@ The Quick and Dirty Freezer Management System
 QDFMS manages items in containers. Items can have categories. Item history is tracked so if you scan something it's seen before, you'll get the data. It also tracks how often an item has been added/removed over a barcode's lifetime, but this trending data isn't exposed in the app UI yet (but you can query Inventory.HistoricalItems in e.g iex) 
 
 This code is pre-pre-pre-alpha, and most certainly contains many bugs. It is not yet packagable as an application but that's up next :P 
-This was a fun project to learn about Phoenix Live View, but also because we got sick of not being able to easily recall what's in our chest freezer in the basement. See the Known Issues section.
+This was a fun project to learn about Phoenix Live View, but also because we got sick of not being able to easily recall what's in our chest freezer in the basement. See the [Known Issues](#known-issues) section.
 
 The goal was to create an app that would have minimal non-BEAM dependencies, which is why mnesia was chosen for persistance - it's part of the Erlang/OTP release. 
 
@@ -92,3 +92,56 @@ Add Item Screen:
 * Expiry date is required but not validated to exist on the form
 * No way to generate QR codes for printing for generated (manually entered) items. This is a TODO so you can print codes for things and manage them easier. Workaround is to generate codes for the item using another tool FIRST then scan them in. You can also view an item to get it's "UPC" (generic field name for any scanned barcode, even if it's not actually a UPC) and use whatever tool you want to generate a barcode you like (and is [supported](https://github.com/mebjas/html5-qrcode#supported-code-formats) by the scanning library) 
 * Previously entered items don't sync their categories correctly in UI.
+* Some features in the backend such as searching by weight (with auto-conversion) aren't exposed in the webUI. 
+
+### Examples of using the backend 
+If you're running the app using `iex -S mix phx.server`, you can query some things that aren't available via the web UI
+#### Mass Search
+If you want to do things that aren't yet in the UI, like searching by mass, 
+You can do this operation by calling `filter_items_by_category_weight(category, weight, container, comp)` where:
+` category` is the category ID as an integer, `weight` is the weight as an `%ExUc.Value{}`, `container` is the container ID as an integer and `comp` is a comparison atom like `:lt` or `:gt`
+So `filter_items_by_category_weight(1,%ExUc.Value{kind: :mass, unit: :oz, value: 16},2,:gt)` will give you all items that are associated with the cateogry whoose ID is 1, and in container 2, and have a weight more than 16Oz. This oepration converts the item weight and the input weight to grams before doing the comparison, so it's theoritically unit-aware. 
+
+#### Trend / History
+The Inventory.HistoricalItems module keeps track of seen items, their categories, and how often they've been added or removed. 
+```
+Inventory.HistoricalItems.
+create_from_item/1          decrement_count/1
+delete_record/1             find_item_by_upc/1
+get_categories/1            get_categories_raw/1
+get_historical_item/1       increment_count/1
+update_item_categories/2
+```
+The object looks like:
+```
+%Database.HistoricalItem{
+  categories: [
+    %Database.ItemCategory{category_id: 1, item_id: 1},
+    %Database.ItemCategory{category_id: 3, item_id: 1}
+  ],
+  description: "Item Description",
+  id: 1,
+  name: "Item Name",
+  photo: base64Encodedblob,
+  times_added: 3,
+  times_removed: 4,
+  upc: "FOOBARBAZ",
+  weight: %ExUc.Value{kind: :mass, unit: :kg, value: 100.0}
+}
+```
+Updating the categories /should/ happen automatically, but you can call `Inventory.Items.sync_categories_history(id)` to sync the item with ID to its HistoricalItem record. 
+
+#### Moving items between containers
+This is ugly and should be part of the webapp, but it's not yet. 
+This example takes all items with an ID > 14 and changes their container_id to 2
+```
+items_mod = Inventory.Items.get_items_in_container(3) |> Enum.filter(&(&1.id > 14)) |> Enum.map(fn x -> %{x | container_id: 2} end)
+for item <- items_mod, do: item |> Database.Item.write!()
+```
+The data is all maps, basically, so you can do some pretty powerful manipulation of the data if you want. 
+If you have a list of items that you want to change the categories of, `update_categories_items(item, list_of_category_ids)` let's you do that.  
+To get category names and IDs, use `Inventory.Category.get_all_categories |> Enum.map(&({&1.id, &1.name}))` and pick the IDs to populate a list of category_ids you want to assign, then: 
+```
+category_ids = [1,2,3]
+for item <- items, do: Inventory.Items.update_categories_items(item, list_of_category_ids)
+```
