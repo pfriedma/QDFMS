@@ -32,6 +32,8 @@ QDFMS uses mnesia, which is part of the Erlang/OTP distribution. Before running 
 config :mnesia, dir: to_charlist("/var/qdfms/db/Mnesia.nonode@nohost")
 ```
 
+**Make sure this directory is writable by whatever user/group you'll be running the app as**
+
 Then cd to /app/qdfms/apps/inventory and run 
 `mix amnesia.create -d Database --disk` 
 This will create the disk-backed tables for the app 
@@ -93,13 +95,28 @@ Since QDFMS uses mnesia, you can do backups and restores by calling mnesia's bui
 
 To backup the database to `/tmp/backup.db` do `:mnesia.backup('/tmp/backup.db')` 
 
-To restore the database, do: `:mnesia.restore('/tmp/backup.db',[{default_op, recreate_tables}])`
+To restore the database, do: `:mnesia.restore('/tmp/backup.db',[{:default_op,:clear_tables}])`
+
+The restore command assumes the database exists. 
+
+If you're starting over completely, you'll need to run a `mix amnesia.create -d Database --disk` first in the Inventory app. 
+```
+cd /apps/inventory
+mix amnesia.create -d Database --disk
+...
+iex -S mix
+iex(1)> :mnesia.restore('/tmp/backup.db',[{:default_op,:clear_tables}])
+{:atomic,
+ [Database.HistoricalItem, Database.RegisteredDevice, Database.Item,
+  Database.Category, Database.Container, Database.ItemCategory, Database]}
+  
+```
 
 For more info see the [mnesia documentation](https://www.erlang.org/doc/man/mnesia.html#restore-2)
 
 ## Known issues
 * You have to click "search" after adding an item, or else the UI gets sad. (Believe this may be fixed?)
-* Sometimes, scanning to add an item won't bring up the add box. (Thought to be fixed in bfb64d3, but is not :( )
+* Sometimes, scanning to add an item won't bring up the add box. (Believe this may be fixed )
 * Can save multiple copies of an item by just continuing to click the save button, this should be an explicit "Create N copies" operation, not a non-validated submit operation. 
 * Wight can only be entered in whole numbers 
 * Expiry date is required but not validated to exist on the form
