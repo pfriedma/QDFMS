@@ -164,3 +164,5 @@ items_mod = Inventory.Items.get_items_in_container(3) |> Enum.filter(&(String.co
 for item <- items_mod, do: item |> Database.Item.write!()
 ```
 etc. 
+
+Remember - this bypasses HistoricalItems so you may need make calls to `Inventory.HistoricalItems.create_from_item(item)` or other functions to reconcile your manual changes. 

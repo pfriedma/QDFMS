@@ -74,7 +74,7 @@ defmodule QdfmsWeb.HomeLive do
             to: "#reader",
             attr: ""
           })
-          |> assign(items: do_remove_item(data))
+          |> assign(items: do_remove_item(data, socket))
           |> assign(state: %{name: "search", data: %{}})}
      else
      {:noreply, socket
@@ -144,8 +144,13 @@ defmodule QdfmsWeb.HomeLive do
     {:noreply, socket}
   end
 
-  defp do_remove_item(upc) do
-     Inventory.Items.find_item_by_upc(upc)
+  defp do_remove_item(upc,socket) do
+     items =  Inventory.Items.find_item_by_upc(upc)
+     if Enum.count(items) > 0 do
+      items
+     else
+      Inventory.Items.get_items_in_container(String.to_integer(socket.assigns.container_id))
+     end
   end
 
   defp lookup_upc_info(upc) do
@@ -182,6 +187,7 @@ defmodule QdfmsWeb.HomeLive do
     function onScanSuccess(decodedText, decodedResult) {
       //const channel = useChannel("counter:lobby", "shout", updateMsg);
       // Handle on success condition with the decoded text or result.
+      html5QrcodeScanner.pause();
       console.log(`Scan result: ${decodedText}`, decodedResult);
       //window.channel.push('recv_scan',{'data': decodedText});
       read_upc = decodedText;
@@ -282,10 +288,10 @@ defmodule QdfmsWeb.HomeLive do
     function onScanSuccess(decodedText, decodedResult) {
       //const channel = useChannel("counter:lobby", "shout", updateMsg);
       // Handle on success condition with the decoded text or result.
+      html5QrcodeScanner.pause();
       console.log(`Scan result: ${decodedText}`, decodedResult);
       //window.channel.push('recv_scan',{'data': decodedText});
       read_upc = decodedText;
-      html5QrcodeScanner.pause();
       console.log(`Scan result is ${read_upc}`,read_upc);
       document.getElementById('read_button').value=read_upc;
       document.getElementById('read_button').click();
