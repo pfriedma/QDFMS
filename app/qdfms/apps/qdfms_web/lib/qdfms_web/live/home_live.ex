@@ -122,7 +122,9 @@ defmodule QdfmsWeb.HomeLive do
   end
 
   def handle_info({:event, %{update_items: id}}, socket) do
-    send_update(ItemComponentList, id: "res-"<>to_string(id), edit: %{do: false})
+    if socket.assigns.state["name"] == "search" do
+      send_update(ItemComponentList, id: "res-"<>to_string(id), edit: %{do: false})
+    end
     {:noreply,
     socket
     |> put_flash(:info, "Items updated")
@@ -256,7 +258,7 @@ defmodule QdfmsWeb.HomeLive do
           <div id="reader" phx-update="ignore" style="width:500px; display: inline-block;"></div>
           <div class="empty"></div>
           <div id="scanned-result"></div>
-          <button phx-click="recv_scan" phx-value=" " id='read_button'> Add WIthout Scanning </button>
+          <button phx-click="recv_scan" phx-value=" " id='read_button'> Continue WIthout Scanning </button>
 
 
     </div>
@@ -283,6 +285,7 @@ defmodule QdfmsWeb.HomeLive do
       console.log(`Scan result: ${decodedText}`, decodedResult);
       //window.channel.push('recv_scan',{'data': decodedText});
       read_upc = decodedText;
+      html5QrcodeScanner.pause();
       console.log(`Scan result is ${read_upc}`,read_upc);
       document.getElementById('read_button').value=read_upc;
       document.getElementById('read_button').click();

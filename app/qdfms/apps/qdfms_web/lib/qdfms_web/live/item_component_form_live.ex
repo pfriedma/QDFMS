@@ -105,7 +105,7 @@ defmodule ItemComponentFormLive do
     <div class="item_form">
 
     <%= f = form_for :item, "#",  phx_submit: "save_item", phx_change: "validate", phx_target: @myself %>
-      <% cats = if @id != "new", do: Enum.map(Inventory.Items.get_categories_raw(String.to_integer(@id)), fn %Database.ItemCategory{} = x -> x.category_id end), else: [@item_categories]%>
+      <% cats = if @id != "new", do: Enum.map(Inventory.Items.get_categories_raw(String.to_integer(@id)), fn %Database.ItemCategory{} = x -> x.category_id end), else: @item_categories %>
       <%= hidden_input f, :id, value: @id %>
       <%= hidden_input f, :container, value: @container%>
         <%= label f, :name %>
