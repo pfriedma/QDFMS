@@ -85,6 +85,14 @@ Search Screen:
 Add Item Screen: 
 ![Item add screen](/doc_images/AddNew.png?raw=true "Add Item")
 
+## Backup and Restore
+Since QDFMS uses mnesia, you can do backups and restores by calling mnesia's builtin functions from an IEX session. 
+
+To backup the database to `/tmp/backup.db` do `:mnesia.backup('/tmp/backup.db')` 
+
+To restore the database, do: `:mnesia.restore('/tmp/backup.db',[{default_op, recreate_tables}])`
+
+For more info see the [mnesia documentation](https://www.erlang.org/doc/man/mnesia.html#restore-2)
 
 ## Known issues
 * You have to click "search" after adding an item, or else the UI gets sad. (Believe this may be fixed?)
