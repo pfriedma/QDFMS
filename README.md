@@ -14,6 +14,8 @@ QDFMS uses the [mebjas-html5-qrcode library](https://github.com/mebjas/html5-qrc
 Eventually, I'll clean it up so you can build a BEAM file that just runs the thing, but now its only tested running via mix.
 
 #### About the app 
+This app was built on Erlang/OTP 25 and Elixir 1.13
+
 It is an ELixir Umbrella app containing
 * [Inventory](/app/qdfms/apps/inventory): A Mnesia-backed inventory manager application that supports basic operations on Items, Containers, etc
 * [qdfms_web](/app/qdfms/apps/qdfms_web): A web interface for Inventory 
