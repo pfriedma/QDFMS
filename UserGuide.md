@@ -31,7 +31,7 @@ If product information is already available, it will pre-populate the informatio
 
 Enter the details of the product (weight must be a whole number), and select any categories you want to tag the item with. Previously selected categories should be pre-checked. If you make changes, those categories selected will be selected next time. 
 
-**IMPORTANT: *ALL FIELDS* are mandatory** if you can't find an item expiry date, pick one a year out or something.  
+**IMPORTANT: *ALL FIELDS* are mandatory except image** if you can't find an item expiry date, pick one a year out or something.  
 
 When the item looks correct, click the `Save` button. If you are adding multiple identical items, you can click the button multiple times. This is a ~~bug~~ feature.
 
