@@ -23,7 +23,23 @@ It is an ELixir Umbrella app containing
 [Data Model](/app/qdfms) 
 
 ## Use and Setup
+### Elixir Dependencies 
+QDFMS needs Elixir 1.13+ and has been tested with Erlang/OTP 25. How you install Elixir/Erlang is up to you; I'm running on a RaspberryPI using the Erlang Solutions repositories and its `esl-erlang` and `elixir` packages. If you're on debian/raspian:
 
+```
+wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb
+sudo dpkg -i erlang-solutions_2.0_all.deb
+sudo apt update
+sudo apt install esl-erlang
+sudo apt install elixir
+```
+should get you up and running! 
+
+QDFMS needs a few dependencies (mainly phoenix and its dependencies) in order to run. To fetch them do:
+```
+cd app/qdfms/
+mix deps.get 
+```
 ### Config
 You'll need to do some small setup items to run it... 
 #### Database
