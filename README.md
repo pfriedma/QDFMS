@@ -78,8 +78,13 @@ That's it for the non-in-app configuration. The next bits will be done within th
 
 ### Running
 To run the webapp:
-cd to apps/qdfms_web
-`run iex -S mix phx.server`
+
+cd to `app/qdfms/apps/qdfms_web`
+
+run `iex -S mix phx.server`
+
+This operation may take a while the first time as files are compiled and checked. 
+
 
 #### Setting up Containers and Categories 
 go to https://hostname:port/admin to configure:
