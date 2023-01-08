@@ -1,9 +1,9 @@
 # QDFMS User Documentation
 
 ## Basic Quickstart
-This section assumes a configured application. If you haven't done so, see [Admin Configuration](#admin-configuration)
+This section assumes a configured application. If you haven't set up the app or its dependencies please see [Use and Setup](https://github.com/pfriedma/QDFMS#use-and-setup) before going further. If you haven't configured categories or containers, see [Admin Configuration](#admin-configuration) before proceeding. 
 
-Sometimes the app doesn't respond appropriately. You can always just refresh the page to get a fresh session. 
+**NOTE**: Sometimes the app doesn't respond appropriately. You can always just refresh the page to get a fresh session. 
 
 ### Container Selection
 When the app is loaded (or the page refreshed), you'll be prompted to select which container to manage from a drop-down list. Select the container you want, and click the `Manage Container` button. If you want to change containers at any time, just refresh the page, and the app will ask you to select a container to manage. 
@@ -62,7 +62,7 @@ Inventory.HistoricalItems.create_from_item(item)
 ```
 
 ### ??? 
-Refresh the page? 
+When in doubt, refresh the page and start with a fresh session.
 
 
 ## Admin Configuration
