@@ -159,15 +159,15 @@ useBarCodeDetectorIfSupported: false
 ```
 to force use of non browser decoding 
 
-### Examples of using the backend 
+## Examples of using the backend 
 If you're running the app using `iex -S mix phx.server`, you can query some things that aren't available via the web UI
-#### Mass Search
+### Mass Search
 If you want to do things that aren't yet in the UI, like searching by mass, 
 You can do this operation by calling `filter_items_by_category_weight(category, weight, container, comp)` where:
 ` category` is the category ID as an integer, `weight` is the weight as an `%ExUc.Value{}`, `container` is the container ID as an integer and `comp` is a comparison atom like `:lt` or `:gt`
 So `filter_items_by_category_weight(1,%ExUc.Value{kind: :mass, unit: :oz, value: 16},2,:gt)` will give you all items that are associated with the cateogry whoose ID is 1, and in container 2, and have a weight more than 16Oz. This oepration converts the item weight and the input weight to grams before doing the comparison, so it's theoritically unit-aware. 
 
-#### Trend / History
+### Trend / History
 The Inventory.HistoricalItems module keeps track of seen items, their categories, and how often they've been added or removed. 
 ```
 Inventory.HistoricalItems.
@@ -196,14 +196,14 @@ The object looks like:
 ```
 Updating the categories /should/ happen automatically, but you can call `Inventory.Items.sync_categories_history(id)` to sync the item with ID to its HistoricalItem record. 
 
-#### Moving items between containers
+### Moving items between containers
 This is ugly and should be part of the webapp, but it's not yet. 
 This example takes all items from container 3, with an ID > 14 and changes their container_id to 2
 ```
 items_mod = Inventory.Items.get_items_in_container(3) |> Enum.filter(&(&1.id > 14)) |> Enum.map(fn x -> %{x | container_id: 2} end)
 for item <- items_mod, do: item |> Database.Item.write!()
 ```
-#### Other data operations
+### Other data operations
 The data is all maps, basically, so you can do some pretty powerful manipulation of the data if you want. 
 
 If you have a list of items that you want to change the categories of, `update_categories_items(item, list_of_category_ids)` let's you do that.  
