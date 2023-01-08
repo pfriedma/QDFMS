@@ -144,6 +144,20 @@ For more info see the [mnesia documentation](https://www.erlang.org/doc/man/mnes
 * No way to generate QR codes for printing for generated (manually entered) items. This is a TODO so you can print codes for things and manage them easier. Workaround is to generate codes for the item using another tool FIRST then scan them in. You can also view an item to get it's "UPC" (generic field name for any scanned barcode, even if it's not actually a UPC) and use whatever tool you want to generate a barcode you like (and is [supported](https://github.com/mebjas/html5-qrcode#supported-code-formats) by the scanning library) 
 * Previously entered items don't sync their categories correctly in UI. (fixed in bfb64d3)
 * Some features in the backend such as searching by weight (with auto-conversion) aren't exposed in the webUI. 
+* On desktop devices, scanning things that aren't QR codes might not work see below:
+
+### Desktop scanning and non QR codes
+in `app\qdfms\apps\qdfms_web\lib\qdfms_web\live\home_live.ex` you'll want to find all instances of the `let html5QrcodeScanner = new Html5QrcodeScanner(` block and change:
+
+```
+showTorchButtonIfSupported: true
+```
+to 
+```
+showTorchButtonIfSupported: true,
+useBarCodeDetectorIfSupported: false
+```
+to force use of non browser decoding 
 
 ### Examples of using the backend 
 If you're running the app using `iex -S mix phx.server`, you can query some things that aren't available via the web UI
