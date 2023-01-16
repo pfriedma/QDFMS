@@ -1,6 +1,16 @@
 # QDFMS
 The Quick and Dirty Freezer Management System 
 
+## Quickstart (Docker)
+1. Download the Dockerfile 
+1.  `docker build -t qdfms .`
+1. `docker run -it -p 8443:443 --name qdfms qdfms` 
+1. Point your browser to `https://localhost:8443 `
+1. Follow along with the [User Guide](/UserGuide.md)
+
+To restart the container (and get an iex shell, if you don't want that omit the `i`), 
+`  docker start -ai qdfms`
+
 ## Intro 
 QDFMS manages items in containers. Items can have categories. Item history is tracked so if you scan something it's seen before, you'll get the data. It also tracks how often an item has been added/removed over a barcode's lifetime, but this trending data isn't exposed in the app UI yet (but you can query Inventory.HistoricalItems in e.g iex - see [Other Data Operatoins](#other-data-operations)
 
@@ -12,6 +22,7 @@ The goal was to create an app that would have minimal non-BEAM dependencies, whi
 QDFMS uses the [mebjas-html5-qrcode library](https://github.com/mebjas/html5-qrcode) in the client to support barcode scanning. It's not linked in particularly well because I ran into an issue including it in app.js that I haven't spent time resolving :P 
 
 Eventually, I'll clean it up so you can build a BEAM file that just runs the thing, but now its only tested running via mix.
+
 
 #### About the app 
 This app was built on Erlang/OTP 25 and Elixir 1.13
