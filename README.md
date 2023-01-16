@@ -8,7 +8,7 @@ This will get you up and running in a container using a self-signed cert
 1.  `docker build -t qdfms .`
 1. `docker run -it -p 8443:443 --name qdfms qdfms` 
 1. Point your browser to `https://localhost:8443 `
-1. Follow along with the [User Guide](/UserGuide.md)
+1. Follow along with the [User Guide](/UserGuide.md) (Do the admin step)
 
 To restart the container (and get an iex shell, if you don't want that omit the `i`), 
 `  docker start -ai qdfms`
