@@ -2,6 +2,8 @@
 The Quick and Dirty Freezer Management System 
 
 ## Quickstart (Docker)
+This will get you up and running in a container using a self-signed cert 
+
 1. Download the Dockerfile 
 1.  `docker build -t qdfms .`
 1. `docker run -it -p 8443:443 --name qdfms qdfms` 
@@ -10,6 +12,7 @@ The Quick and Dirty Freezer Management System
 
 To restart the container (and get an iex shell, if you don't want that omit the `i`), 
 `  docker start -ai qdfms`
+
 
 ## Intro 
 QDFMS manages items in containers. Items can have categories. Item history is tracked so if you scan something it's seen before, you'll get the data. It also tracks how often an item has been added/removed over a barcode's lifetime, but this trending data isn't exposed in the app UI yet (but you can query Inventory.HistoricalItems in e.g iex - see [Other Data Operatoins](#other-data-operations)
