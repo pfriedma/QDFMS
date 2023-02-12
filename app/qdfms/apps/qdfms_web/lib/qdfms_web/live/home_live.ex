@@ -179,9 +179,10 @@ defmodule QdfmsWeb.HomeLive do
       <%= select f, :container, Enum.map(Inventory.Container.get_all_containers(), &{&1.name, &1.id}) %>
       <%= submit "Manage Container" %>
     </div>
-    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <script src="../assets/html5-qrcode.min.js" type="text/javascript"></script>
 
     <script>
+
     function foo() {
 
     function onScanSuccess(decodedText, decodedResult) {
@@ -238,7 +239,7 @@ defmodule QdfmsWeb.HomeLive do
     <button class="big" phx-click="search_form">Search</button>
     <button class="big" phx-click="remove_item">Remove Item</button>
 
-    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <script src="../assets/html5-qrcode.min.js" type="text/javascript"></script>
     <script>
     function docReady(fn) {
       // see if DOM is already available

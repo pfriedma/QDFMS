@@ -87,6 +87,7 @@ cd to `/apps/qdfms_web` and run `mix phx.gen.cert` and update the config in def/
     certfile: "priv/cert/selfsigned.pem"
   ]
 ```
+Finally, copy the html5-qrcode from `/assets/vendor/html5-qrcode.min.js` to `/priv/static/assets`. 
 
 That's it for the non-in-app configuration. The next bits will be done within the webapp: 
 
